@@ -35,6 +35,7 @@ class RestaurantDB:
         cursor.execute(("CREATE TABLE Orders ("
                         "    id INTEGER PRIMARY KEY AUTOINCREMENT,"
                         "    userId INTEGER NOT NULL,"
+                        "    status TEXT NOT NULL,"
                         "    orderDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
                         "    FOREIGN KEY (userId) REFERENCES User(id));"))
         cursor.close()
@@ -44,10 +45,10 @@ class RestaurantDB:
         cursor = self.connection.cursor()
         cursor.execute('DROP TABLE IF EXISTS OrderDetails ')
         cursor.execute(("CREATE TABLE OrderDetails ("
-                        "    id INTEGER PRIMARY KEY AUTOINCREMENT,"
                         "    orderId INTEGER NOT NULL,"
                         "    foodId INTEGER NOT NULL,"
                         "    quantity INTEGER NOT NULL,"
+                        "    PRIMARY KEY (orderId, foodId)"
                         "    FOREIGN KEY (orderId) REFERENCES Orders(orderId),"
                         "    FOREIGN KEY (foodId) REFERENCES Foods(foodId));"))
         cursor.close()
@@ -55,53 +56,84 @@ class RestaurantDB:
 
     def add_user(self, firstname, lastname, phone_number, mail, password):
         cursor = self.connection.cursor()
-        cursor.execute(("INSERT INTO User (firstname, lastname, phone_number, mail, password)"
-                        f"VALUES ('{firstname}', {lastname}, '{phone_number}', '{mail}', '{password}');"))
+        query = ("INSERT INTO User (firstname, lastname, phone_number, mail, password)"
+                 "VALUES (?, ?, ?, ?, ?);")
+        user_data = (firstname, lastname, phone_number, mail, password)
+        cursor.execute(query, user_data)
+        last_id = cursor.lastrowid
         cursor.close()
         self.connection.commit()
+        return last_id
 
     def remove_user(self, user_id):
         cursor = self.connection.cursor()
-        cursor.execute(f"DELETE FROM User WHERE id = {user_id}")
+        query = "DELETE FROM User WHERE id = ?"
+        cursor.execute(query, (user_id,))
         cursor.close()
         self.connection.commit()
 
     def add_menu(self, food, price, available):
         cursor = self.connection.cursor()
-        cursor.execute(("INSERT INTO Menu (food, price, available)"
-                        f"VALUES ('{food}', {price}, '{available}');"))
+        query = ("INSERT INTO Menu (food, price, available)"
+                 "VALUES (?, ?, ?);")
+        menu_data = (food, price, available)
+        cursor.execute(query, menu_data)
+        last_id = cursor.lastrowid
         cursor.close()
         self.connection.commit()
+        return last_id
 
     def remove_menu(self, menu_id):
         cursor = self.connection.cursor()
-        cursor.execute(f"DELETE FROM Menu WHERE id = {menu_id}")
+        query = "DELETE FROM Menu WHERE id = ?"
+        cursor.execute(query, (menu_id,))
         cursor.close()
         self.connection.commit()
 
-    def add_order(self, user_id, order_date, quantity):
+    def add_order(self, user_id, status):
         cursor = self.connection.cursor()
-        cursor.execute(("INSERT INTO Order (userId, order_date, quantity)"
-                        f"VALUES ('{user_id}', '{order_date}', {quantity}');"))
+        query = ("INSERT INTO Orders (userId, status)"
+                 "VALUES (?, ?);")
+        order_data = (user_id, status)
+        cursor.execute(query, order_data)
+        last_id = cursor.lastrowid
+        cursor.close()
+        self.connection.commit()
+        return last_id
+
+    def update_order_stats(self, order_id: int, new_status: str):
+        # Update the status of the order with the specified orderId
+        cursor = self.connection.cursor()
+        query = ("UPDATE Orders "
+                 "SET status = ? "
+                 "WHERE id = ?")
+
+        cursor.execute(query, (new_status, order_id))
         cursor.close()
         self.connection.commit()
 
     def remove_order(self, order_id):
         cursor = self.connection.cursor()
-        cursor.execute(f"DELETE FROM Orders WHERE id = {order_id}")
+        query = "DELETE FROM Orders WHERE id = ?"
+        cursor.execute(query, (order_id,))
         cursor.close()
         self.connection.commit()
 
     def add_order_details(self, order_id, food_id, quantity):
         cursor = self.connection.cursor()
-        cursor.execute(("INSERT INTO OrderDetails (order_id, food_id, quantity)"
-                        f"VALUES ('{order_id}', {food_id}, '{quantity}');"))
+        query = ("INSERT INTO OrderDetails (orderId, foodId, quantity)"
+                 "VALUES (?, ?, ?);")
+        order_details_data = (order_id, food_id, quantity)
+        cursor.execute(query, order_details_data)
+        last_id = cursor.lastrowid
         cursor.close()
         self.connection.commit()
+        return last_id
 
     def remove_order_details(self, order_id):
         cursor = self.connection.cursor()
-        cursor.execute(f"DELETE FROM OrderDetails WHERE id = {order_id}")
+        query = "DELETE FROM OrderDetails WHERE id = ?"
+        cursor.execute(query, (order_id,))
         cursor.close()
         self.connection.commit()
 
@@ -118,14 +150,18 @@ class RestaurantDB:
         cursor = self.connection.cursor()
         rows = cursor.execute("SELECT * from User").fetchall()
         print(rows)
+        rows = cursor.execute("SELECT * from Orders").fetchall()
+        print(rows)
+        rows = cursor.execute("SELECT * from OrderDetails").fetchall()
+        print(rows)
 
 
 if __name__ == '__main__':
     db = RestaurantDB()
-    db.init_user_table()
-    db.init_menu_table()
-    db.init_order_table()
-    db.init_order_details_table()
-    db.add_random_users()
-    # db.remove_user(1)
+    # db.init_user_table()
+    # db.init_menu_table()
+    # db.init_order_table()
+    # db.init_order_details_table()
+    # db.add_user("eu", "tu", "0127931", "mai@as.c", "fawonflaiks")
+
     db.read()
