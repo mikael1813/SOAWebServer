@@ -9,6 +9,7 @@ def consume_messages(bootstrap_servers, group_id, topic):
     }
 
     consumer = Consumer(consumer_conf)
+    print(consumer.list_topics().topics)
     consumer.subscribe([topic])
 
     try:
@@ -37,6 +38,6 @@ def consume_messages(bootstrap_servers, group_id, topic):
 if __name__ == '__main__':
     bootstrap_servers = 'localhost:9092'  # Replace with your Kafka bootstrap servers
     group_id = 'group1'  # Replace with your consumer group ID
-    topic = "my-topic"  # Replace with your Kafka topic
+    topic = 'menu'  # Replace with your Kafka topic
 
     consume_messages(bootstrap_servers, group_id, topic)

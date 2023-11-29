@@ -83,12 +83,26 @@ class RestaurantDB:
         self.connection.commit()
         return last_id
 
+    def update_menu(self, id, food, price, available):
+        cursor = self.connection.cursor()
+        query = "UPDATE Menu SET food = ?, price = ?, available = ? WHERE id = ?"
+        menu_data = (food, price, available, id)
+        cursor.execute(query, menu_data)
+        cursor.close()
+        self.connection.commit()
+
     def remove_menu(self, menu_id):
         cursor = self.connection.cursor()
         query = "DELETE FROM Menu WHERE id = ?"
         cursor.execute(query, (menu_id,))
         cursor.close()
         self.connection.commit()
+
+    def get_all_foods(self):
+        cursor = self.connection.cursor()
+        rows = cursor.execute("SELECT * from Menu").fetchall()
+        cursor.close()
+        return rows
 
     def add_order(self, user_id, status):
         cursor = self.connection.cursor()
@@ -111,6 +125,12 @@ class RestaurantDB:
         cursor.execute(query, (new_status, order_id))
         cursor.close()
         self.connection.commit()
+
+    def get_all_orders(self):
+        cursor = self.connection.cursor()
+        rows = cursor.execute("SELECT * from Orders").fetchall()
+        cursor.close()
+        return rows
 
     def remove_order(self, order_id):
         cursor = self.connection.cursor()
@@ -153,6 +173,8 @@ class RestaurantDB:
         rows = cursor.execute("SELECT * from Orders").fetchall()
         print(rows)
         rows = cursor.execute("SELECT * from OrderDetails").fetchall()
+        print(rows)
+        rows = cursor.execute("SELECT * from Menu").fetchall()
         print(rows)
 
 

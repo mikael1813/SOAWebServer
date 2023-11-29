@@ -1,2 +1,4 @@
 flask
 gunicorn
+pika
+confluent_kafka

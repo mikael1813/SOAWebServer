@@ -1,0 +1,3 @@
+implemented hash
+
+need to do get all food where i send a msg of all foods using kafka to wsgi - semidone - problem menu micro service receives the msg with all the foods

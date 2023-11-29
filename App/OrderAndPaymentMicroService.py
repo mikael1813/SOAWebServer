@@ -17,21 +17,39 @@ class OrderAndPaymentMicroService:
         channel = connection.channel()
 
         # Declare an exchange and queues
-        channel.exchange_declare(exchange='example_exchange', exchange_type='topic')
+        channel.exchange_declare(exchange=FromCentralServiceToMicroService, exchange_type='topic')
 
-        channel.queue_declare(queue=FromAppToKitchen)
-        channel.queue_bind(exchange='example_exchange', queue=FromAppToKitchen, routing_key=AddOrder)
-        channel.queue_bind(exchange='example_exchange', queue=FromAppToKitchen, routing_key=ChangeStatus)
+        channel.queue_declare(queue=FromCentralServiceToMicroService)
+        channel.queue_bind(exchange=FromCentralServiceToMicroService, queue=FromCentralServiceToMicroService,
+                           routing_key=AddOrder)
+        channel.queue_bind(exchange=FromCentralServiceToMicroService, queue=FromCentralServiceToMicroService,
+                           routing_key=ChangeStatus)
+        channel.queue_bind(exchange=FromCentralServiceToMicroService, queue=FromCentralServiceToMicroService,
+                           routing_key=GetOrders)
 
         def callback(ch, method, properties, body):
-            data = json.loads(body)
+            try:
+                data = json.loads(body)
+                hash_key = data[HashKey]
+            except json.decoder.JSONDecodeError as je:
+                data = None
             print(data)
+            return_message = {
+                HashKey: hash_key
+            }
             if method.routing_key == AddOrder:
                 self.add_order(data["user_id"], data["foods"])
             elif method.routing_key == ChangeStatus:
                 self.change_status(data["order_id"], data["status"])
+            elif method.routing_key == GetOrders:
+                return_message[Body] = self.get_all_orders()
+                orders = json.dumps(return_message)
+                temp_channel = connection.channel()
+                temp_channel.exchange_declare(exchange=FromMicroServiceToCentralService, exchange_type='topic')
+                temp_channel.basic_publish(exchange=FromMicroServiceToCentralService, routing_key=GetOrders,
+                                           body=orders)
 
-        channel.basic_consume(queue=FromAppToKitchen, on_message_callback=callback, auto_ack=True)
+        channel.basic_consume(queue=FromCentralServiceToMicroService, on_message_callback=callback, auto_ack=True)
 
         print(' [*] Waiting for messages. To exit press CTRL+C')
         channel.start_consuming()
@@ -50,6 +68,10 @@ class OrderAndPaymentMicroService:
         self.db.update_order_stats(order_id, status)
 
         print(f"Succesfully changed status for order with id={order_id} to {status}")
+
+    def get_all_orders(self):
+        orders = self.db.get_all_orders()
+        return orders
 
 
 o = OrderAndPaymentMicroService()
