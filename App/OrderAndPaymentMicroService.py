@@ -33,6 +33,7 @@ class OrderAndPaymentMicroService:
                 hash_key = data[HashKey]
             except json.decoder.JSONDecodeError as je:
                 data = None
+                hash_key = ''
             print(data)
             return_message = {
                 HashKey: hash_key
@@ -43,6 +44,7 @@ class OrderAndPaymentMicroService:
                 self.change_status(data["order_id"], data["status"])
             elif method.routing_key == GetOrders:
                 return_message[Body] = self.get_all_orders()
+                print(return_message)
                 orders = json.dumps(return_message)
                 temp_channel = connection.channel()
                 temp_channel.exchange_declare(exchange=FromMicroServiceToCentralService, exchange_type='topic')
@@ -65,7 +67,7 @@ class OrderAndPaymentMicroService:
         print(f"Succesfully added order {order_id}")
 
     def change_status(self, order_id: int, status: str):
-        self.db.update_order_stats(order_id, status)
+        self.db.update_order_status(order_id, status)
 
         print(f"Succesfully changed status for order with id={order_id} to {status}")
 

@@ -13,3 +13,4 @@ GetAllFoods = "GetAllFoods"
 
 HashKey = "HashKey"
 Body = "Body"
+TimeFormat = "%m/%d/%Y, %H:%M:%S"

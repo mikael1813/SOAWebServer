@@ -30,17 +30,17 @@ def produce_message(bootstrap_servers, topic, message):
 if __name__ == '__main__':
     bootstrap_servers = 'localhost:9092'  # Replace with your Kafka bootstrap servers
     topic = FromCentralServiceToMicroService  # Replace with your Kafka topic
-    message = {
-        HashKey: "124",
-        AddFood:
-            [
-                {
-                    "food": "mar",
-                    "price": 500,
-                    "available": True
-                }
-            ]
-    }
+    # message = {
+    #     HashKey: "124",
+    #     AddFood:
+    #         [
+    #             {
+    #                 "food": "mar",
+    #                 "price": 500,
+    #                 "available": True
+    #             }
+    #         ]
+    # }
     # message = {
     #     HashKey: "124",
     #     RemoveFood:
@@ -48,9 +48,9 @@ if __name__ == '__main__':
     #             1
     #         ]
     # }
-    message = json.dumps(message)
-
-    produce_message(bootstrap_servers, topic, message)
+    # message = json.dumps(message)
+    #
+    # produce_message(bootstrap_servers, topic, message)
 
     # message = {
     #     HashKey: "124",

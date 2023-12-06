@@ -43,7 +43,10 @@ class MenuAndInventoryMicroService:
                     print('Received message: {}'.format(msg.value().decode('utf-8')))
                     try:
                         data = json.loads(msg.value())
-                        first_key = next(iter(data))
+                        for key in data:
+                            if key != HashKey:
+                                first_key = key
+                                break
                         hash_key = data[HashKey]
                         return_message = {
                             HashKey: hash_key

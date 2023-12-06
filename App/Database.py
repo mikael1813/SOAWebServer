@@ -65,6 +65,16 @@ class RestaurantDB:
         self.connection.commit()
         return last_id
 
+    def get_user_by_mail(self, mail):
+        cursor = self.connection.cursor()
+        query = "SELECT * from User WHERE mail = ?"
+        user_data = (mail,)
+        cursor.execute(query, user_data)
+        rows = cursor.execute(query, user_data).fetchall()
+        cursor.close()
+        self.connection.commit()
+        return rows
+
     def remove_user(self, user_id):
         cursor = self.connection.cursor()
         query = "DELETE FROM User WHERE id = ?"
@@ -115,7 +125,7 @@ class RestaurantDB:
         self.connection.commit()
         return last_id
 
-    def update_order_stats(self, order_id: int, new_status: str):
+    def update_order_status(self, order_id: int, new_status: str):
         # Update the status of the order with the specified orderId
         cursor = self.connection.cursor()
         query = ("UPDATE Orders "
@@ -180,6 +190,8 @@ class RestaurantDB:
 
 if __name__ == '__main__':
     db = RestaurantDB()
+    # x = db.get_user_by_mail('mai@as.c')
+
     # db.init_user_table()
     # db.init_menu_table()
     # db.init_order_table()
