@@ -272,15 +272,14 @@ def get_all_foods():
         time.sleep(1)
         print(main_service.menu_messages)
         for el in main_service.menu_messages:
-            # left here
             if message[HashKey] == el[HashKey]:
                 return Response(
-                    json.loads(el[Body])
+                    json.dumps(el[Body])
                 )
 
     return Response(
         "Error ocurred",
-        status=200,
+        status=500,
     )
 
 

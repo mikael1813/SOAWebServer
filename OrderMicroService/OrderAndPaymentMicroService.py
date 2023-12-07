@@ -1,10 +1,8 @@
 import json
-import os
-import sys
 
 import pika
 
-from App.Database import RestaurantDB
+from Database import RestaurantDB
 from constants import *
 
 

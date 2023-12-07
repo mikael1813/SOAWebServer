@@ -3,7 +3,7 @@ import json
 
 import pika
 
-from App.constants import *
+from constants import *
 
 connection = pika.BlockingConnection(
     pika.ConnectionParameters(host='localhost'))

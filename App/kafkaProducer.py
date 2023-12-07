@@ -2,7 +2,7 @@ import json
 
 from confluent_kafka import Producer
 
-from App.constants import *
+from constants import *
 
 
 def delivery_report(err, msg):

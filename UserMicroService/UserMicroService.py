@@ -1,22 +1,22 @@
 import sqlite3
 
-from flask import Flask, request, jsonify, Response
+from flask import Flask, request, Response
 
-from App.Database import RestaurantDB
+from Database import RestaurantDB
 
 # instance of flask application
-app = Flask(__name__)
+user_app = Flask(__name__)
 
 
 # home route that returns below text
 # when root url is accessed
-@app.route("/")
+@user_app.route("/")
 def hello_world():
     return "<p>Hello, World!</p>"
 
 
 # Endpoint to create a new guide
-@app.route('/user', methods=["POST"])
+@user_app.route('/user', methods=["POST"])
 def add_user():
     firstname = request.json['firstname']
     lastname = request.json['lastname']
@@ -36,7 +36,7 @@ def add_user():
     return "Added user to database"
 
 
-@app.route('/user', methods=["GET"])
+@user_app.route('/user', methods=["GET"])
 def login():
     mail = request.json['mail']
     password = request.json['password']
@@ -55,4 +55,4 @@ def login():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8001)
+    user_app.run(debug=True, port=8001)
