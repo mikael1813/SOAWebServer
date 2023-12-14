@@ -475,7 +475,6 @@ if __name__ == "__main__":
     MainService('localhost:9092', FromCentralServiceToMicroService)
     socketio.run(app, port=5080, debug=True, allow_unsafe_werkzeug=True)
 
-    time.sleep(2)
 
     # app.run(host='localhost', port=5080, debug=True)
     # app.run(host="0.0.0.0", debug=True)

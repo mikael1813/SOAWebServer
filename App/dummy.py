@@ -20,10 +20,12 @@ if __name__ == "__main__":
     r = requests.post(url=api_url, json=row_data)
     print(r.status_code, r.reason, r.text)
 
-    create_row_data = {'mail_or_token': 'mai@as.c',
-                       'password': 'fawonflaiks',
-                       'user_id': 1}
-    api_url = 'http://localhost:5080/orders/orders'
+    create_row_data = {'mail_or_token': token,
+                       'password': '',
+                       "food": "qutu",
+                       "price": 700,
+                       "available": True}
+    api_url = 'http://localhost:5080/menu'
     r = requests.post(url=api_url, json=create_row_data)
     print(r.status_code, r.reason, r.text)
 

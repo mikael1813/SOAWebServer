@@ -136,11 +136,27 @@ class RestaurantDB:
         cursor.close()
         self.connection.commit()
 
-    def get_all_orders(self):
+    def get_all_orders(self, user_id):
         cursor = self.connection.cursor()
-        rows = cursor.execute("SELECT * from Orders").fetchall()
+        query = "SELECT * from Orders WHERE userId = ?"
+        rows = cursor.execute(query, str(user_id)).fetchall()
+
+        price = 0
+        all_orders = []
+        for order in rows:
+            if int(order[1]) == int(user_id):
+                current_order = {'id': order[0], 'status': order[2], 'time': order[3], 'foods': []}
+                order_details = cursor.execute("SELECT * from OrderDetails WHERE orderId = ?", str(order[0])).fetchall()
+                for order_detail in order_details:
+                    food = cursor.execute("SELECT * from Menu WHERE id = ?", str(order_detail[1])).fetchall()[0]
+                    food_details = {'quantity': order_detail[2], 'name': food[1]}
+                    price += food[2] * order_detail[2]
+                    current_order['foods'].append(food_details)
+                current_order['price'] = price
+                all_orders.append(current_order)
         cursor.close()
-        return rows
+
+        return all_orders
 
     def remove_order(self, order_id):
         cursor = self.connection.cursor()
@@ -162,7 +178,7 @@ class RestaurantDB:
 
     def remove_order_details(self, order_id):
         cursor = self.connection.cursor()
-        query = "DELETE FROM OrderDetails WHERE id = ?"
+        query = "DELETE FROM OrderDetails WHERE orderId = ?"
         cursor.execute(query, (order_id,))
         cursor.close()
         self.connection.commit()
@@ -191,6 +207,13 @@ class RestaurantDB:
 if __name__ == '__main__':
     db = RestaurantDB()
     # x = db.get_user_by_mail('mai@as.c')
+
+    # db.add_menu("banana", 99, True)
+
+    # db.remove_menu(5)
+
+    x = db.get_all_orders(1)
+    print(x)
 
     # db.init_user_table()
     # db.init_menu_table()

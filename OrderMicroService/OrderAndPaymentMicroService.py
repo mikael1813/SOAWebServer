@@ -52,15 +52,15 @@ class OrderAndPaymentMicroService:
                 self.add_order(data["user_id"], data["foods"])
             elif method.routing_key == ChangeStatus:
                 self.change_status(data["order_id"], data["status"])
-            elif method.routing_key == GetOrders:
-                return_message[Body] = self.get_all_orders(data["user_id"])
-                print(return_message)
-                orders = json.dumps(return_message)
-                temp_channel = connection.channel()
-                temp_channel.exchange_declare(exchange=FromMicroServiceToCentralService, exchange_type='topic')
-                temp_channel.basic_publish(exchange=FromMicroServiceToCentralService, routing_key=GetOrders,
-                                           body=orders)
-                temp_channel.close()
+            # elif method.routing_key == GetOrders:
+            return_message[Body] = self.get_all_orders(data["user_id"])
+            print(return_message)
+            orders = json.dumps(return_message)
+            temp_channel = connection.channel()
+            temp_channel.exchange_declare(exchange=FromMicroServiceToCentralService, exchange_type='topic')
+            temp_channel.basic_publish(exchange=FromMicroServiceToCentralService, routing_key=GetOrders,
+                                       body=orders)
+            temp_channel.close()
 
         channel.basic_consume(queue=FromCentralServiceToMicroService, on_message_callback=callback, auto_ack=True)
 

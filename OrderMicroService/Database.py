@@ -3,7 +3,7 @@ import sqlite3
 
 class RestaurantDB:
     def __init__(self):
-        self.connection = sqlite3.connect("restaurant.db")
+        self.connection = sqlite3.connect("../restaurant.db")
 
     def init_user_table(self):
         cursor = self.connection.cursor()

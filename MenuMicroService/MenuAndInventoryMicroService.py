@@ -57,11 +57,11 @@ class MenuAndInventoryMicroService:
                             self.remove_food(data[RemoveFood])
                         elif first_key == UpdateFood:
                             self.update_food(data[UpdateFood])
-                        elif first_key == GetAllFoods:
-                            foods = self.get_all_foods()
-                            return_message[Body] = foods
-                            return_message = json.dumps(return_message)
-                            self.send_message_to_central_service(return_message)
+                        # elif first_key == GetAllFoods:
+                        foods = self.get_all_foods()
+                        return_message[Body] = foods
+                        return_message = json.dumps(return_message)
+                        self.send_message_to_central_service(return_message)
 
                     except json.decoder.JSONDecodeError:
                         print("not json")
