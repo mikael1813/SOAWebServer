@@ -2,9 +2,6 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-# Print the current working directory
-RUN pwd
-
 COPY . .
 
 RUN pip install -r requirments.txt

@@ -50,8 +50,27 @@ def login():
             str(er),
             status=400,
         )
+    except IndexError as er:
+        return Response(
+            str(er),
+            status=400,
+        )
 
     return "failure"
+
+
+@user_app.route('/user/id', methods=["GET"])
+def get_user_id():
+    mail = request.json['mail']
+    try:
+        db = RestaurantDB()
+        user = db.get_user_by_mail(mail)[0]
+        return str(user[0])
+    except sqlite3.Error as er:
+        return Response(
+            str(er),
+            status=400,
+        )
 
 
 if __name__ == '__main__':

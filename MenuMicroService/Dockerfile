@@ -4,6 +4,7 @@ WORKDIR /MenuMicroService
 
 COPY . .
 
-RUN pip install -r requirements.txt
+RUN pip install -r requirments.txt
 
-CMD ["gunicorn", "--bind", "0.0.0.0:5200", "MenuMicroService.py"]
+
+CMD ["python", "MenuAndInventoryMicroService.py"]

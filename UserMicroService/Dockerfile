@@ -4,6 +4,6 @@ WORKDIR /UserMicroService
 
 COPY . .
 
-RUN pip install -r requirements.txt
+RUN pip install -r requirments.txt
 
-CMD ["gunicorn", "--bind", "0.0.0.0:5100", "UserMicroService.py"]
+CMD gunicorn --bind 0.0.0.0:8001 UserMicroService:user_app
